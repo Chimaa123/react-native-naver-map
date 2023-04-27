@@ -92,7 +92,8 @@ public class RNNaverMapViewManager extends ViewGroupManager<RNNaverMapViewContai
 
     @ReactProp(name = "compass", defaultBoolean = false)
     public void setCompassEnabled(RNNaverMapViewContainer mapView, boolean show) {
-        mapView.setCompassEnabled(show);
+        if (mapView != null)
+            mapView.setCompassEnabled(show);
     }
 
     @ReactProp(name = "scaleBar", defaultBoolean = false)
