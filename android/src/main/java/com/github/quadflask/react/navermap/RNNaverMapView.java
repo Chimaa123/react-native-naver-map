@@ -59,8 +59,6 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
 
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
-
-        Log.d('onMapReady RNNaverMapView');
         this.naverMap = naverMap;
         this.naverMap.setLocationSource(this.locationSource);
         this.naverMap.setOnMapClickListener(this);
@@ -311,7 +309,6 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
 
     @Override
     public void onDestroy() {
-        Log.d('onDestroy RNNaverMapView');
         removeAllViews();
         themedReactContext = null;
         locationSource = null;
