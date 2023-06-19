@@ -59,8 +59,10 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
 
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
+
+        Log.d('onMapReady RNNaverMapView');
         this.naverMap = naverMap;
-        this.naverMap.setLocationSource(locationSource);
+        this.naverMap.setLocationSource(this.locationSource);
         this.naverMap.setOnMapClickListener(this);
         this.naverMap.addOnCameraIdleListener(this);
         this.naverMap.addOnCameraChangeListener((reason, animated) -> {
@@ -72,11 +74,10 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
                 lastTouch = System.currentTimeMillis();
             }
         });
-        naverMap.addOnOptionChangeListener(() -> {
-            LocationTrackingMode mode = naverMap.getLocationTrackingMode();
-            locationSource.setCompassEnabled(mode == LocationTrackingMode.Follow || mode == LocationTrackingMode.Face);
+        this.naverMap.addOnOptionChangeListener(() -> {
+            LocationTrackingMode mode = this.naverMap.getLocationTrackingMode();
+            this.locationSource.setCompassEnabled(mode == LocationTrackingMode.Follow || mode == LocationTrackingMode.Face);
         });
-        naverMapSdk.flushCache(() -> Log.i("NaverMap", "Map Cache Clean"));
         onInitialized();
     }
 
@@ -310,6 +311,7 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
 
     @Override
     public void onDestroy() {
+        Log.d('onDestroy RNNaverMapView');
         removeAllViews();
         themedReactContext = null;
         locationSource = null;

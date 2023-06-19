@@ -270,7 +270,6 @@ public class RNNaverMapMarker extends ClickableRNNaverMapFeature<Marker> impleme
     };
 
     private void updateCustomView() {
-        Log.d("MapMarker", "updateCustomView");
         if (customViewBitmap == null
                 || customViewBitmap.isRecycled()
                 || customViewBitmap.getWidth() != feature.getWidth()
