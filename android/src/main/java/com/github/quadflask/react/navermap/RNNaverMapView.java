@@ -73,8 +73,10 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
             }
         });
         this.naverMap.addOnOptionChangeListener(() -> {
-            LocationTrackingMode mode = this.naverMap.getLocationTrackingMode();
-            this.locationSource.setCompassEnabled(mode == LocationTrackingMode.Follow || mode == LocationTrackingMode.Face);
+            if(this.locationSource != null && this.naverMap != null) {
+                LocationTrackingMode mode = this.naverMap.getLocationTrackingMode();
+                this.locationSource.setCompassEnabled(mode == LocationTrackingMode.Follow || mode == LocationTrackingMode.Face);
+            }
         });
         onInitialized();
     }
