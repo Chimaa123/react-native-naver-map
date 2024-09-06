@@ -89,7 +89,7 @@ export interface NaverMapViewProps {
     logoMargin?: Rect;
     logoGravity?: Gravity;
     onInitialized?: Function;
-    onCameraChange?: (event: {
+    onCameraChange?: (event:
         latitude: number;
         longitude: number;
         zoom: number;
