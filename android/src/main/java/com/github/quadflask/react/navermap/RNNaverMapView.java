@@ -10,12 +10,8 @@ import androidx.annotation.NonNull;
 
 import com.airbnb.android.react.maps.ViewAttacherGroup;
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeArray;
-import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.naver.maps.geometry.LatLng;
@@ -78,15 +74,24 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
                 this.locationSource.setCompassEnabled(mode == LocationTrackingMode.Follow || mode == LocationTrackingMode.Face);
             }
         });
+        naverMapSdk.flushCache(() -> Log.i("NaverMap", "Map Cache Clean"));
         onInitialized();
     }
 
     @Override
-    public void setCenter(LatLng latLng) {
-        getMapAsync(e -> {
-            CameraUpdate cameraUpdate = CameraUpdate.scrollTo(latLng).animate(CameraAnimation.Easing);
-            naverMap.moveCamera(cameraUpdate);
-        });
+    public void setCenter(LatLng latLng, Double zoom) {
+        if(zoom >= 0) {
+            getMapAsync(e -> {
+                CameraUpdate cameraUpdate = CameraUpdate.scrollAndZoomTo(latLng, zoom)
+                    .animate(CameraAnimation.Easing);
+                naverMap.moveCamera(cameraUpdate);
+            });
+        } else {
+            getMapAsync(e -> {
+                CameraUpdate cameraUpdate = CameraUpdate.scrollTo(latLng).animate(CameraAnimation.Easing);
+                naverMap.moveCamera(cameraUpdate);
+            });
+        }
     }
 
     @Override
@@ -98,7 +103,7 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
             double bearingValue = bearing == null ? cam.bearing : bearing;
 
             naverMap.moveCamera(CameraUpdate.toCameraPosition(new CameraPosition(latLng, zoomValue, tiltValue, bearingValue))
-                    .animate(CameraAnimation.Easing));
+                .animate(CameraAnimation.Easing));
         });
     }
 
@@ -106,7 +111,7 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
     public void zoomTo(LatLngBounds latLngBounds, int paddingInPx) {
         getMapAsync(e -> {
             CameraUpdate cameraUpdate = CameraUpdate.fitBounds(latLngBounds, paddingInPx)
-                    .animate(CameraAnimation.Easing);
+                .animate(CameraAnimation.Easing);
             naverMap.moveCamera(cameraUpdate);
         });
     }
@@ -116,7 +121,7 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
         getMapAsync(e -> {
             final CameraPosition cameraPosition = naverMap.getCameraPosition();
             naverMap.moveCamera(CameraUpdate.toCameraPosition(
-                    new CameraPosition(cameraPosition.target, cameraPosition.zoom, tilt, cameraPosition.bearing)));
+                new CameraPosition(cameraPosition.target, cameraPosition.zoom, tilt, cameraPosition.bearing)));
         });
     }
 
@@ -125,7 +130,7 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
         getMapAsync(e -> {
             final CameraPosition cameraPosition = naverMap.getCameraPosition();
             naverMap.moveCamera(CameraUpdate.toCameraPosition(
-                    new CameraPosition(cameraPosition.target, cameraPosition.zoom, cameraPosition.tilt, bearing)));
+                new CameraPosition(cameraPosition.target, cameraPosition.zoom, cameraPosition.tilt, bearing)));
         });
     }
 
@@ -281,6 +286,10 @@ public class RNNaverMapView extends MapView implements OnMapReadyCallback, Naver
 
     @Override
     public View getFeatureAt(int index) {
+        // java.lang.IndexOutOfBoundsException 예외가 발생해서 방어함.
+        if (index < 0 || index >= features.size()) {
+            return null;
+        }
         return features.get(index);
     }
 
